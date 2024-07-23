@@ -11,4 +11,9 @@ extract:
 decode:
 	tippecanoe-decode -z $(ZOOM) -Z $(ZOOM) -l $(LAYER) $(EXTRACT_PATH) | \
 	tippecanoe-json-tool > $(DST_DIR)/a.geojsons ; \
-	ogr2ogr -of GeoJSON -dialect sqlite -sql "SELECT ST_Union(geometry) AS geometry FROM a GROUP BY geometry" $(DST_DIR)/a.geojson $(DST_DIR)/a.geojsons
+	ogr2ogr $(DST_DIR)/a1.shp $(DST_DIR)/a.geojsons; \
+	ogr2ogr $(DST_DIR)/a.geojson $(DST_DIR)/a1.shp; \
+	ogr2ogr $(DST_DIR)/a2.shp $(DST_DIR)/a1.shp -dialect sqlite -sql "SELECT ST_Union(geometry) FROM a1"; \
+	ogr2ogr $(DST_DIR)/a2.geojson $(DST_DIR)/a2.shp
+#	ogr2ogr -of "ESRI Shapefile" -dialect sqlite -sql "SELECT ST_Union(geometry) AS geometry FROM a1 GROUP BY geometry" $(DST_DIR)/a2.shp $(DST_DIR)/a1.shp
+#	ogr2ogr -of GeoJSON -dialect sqlite -sql "SELECT ST_Union(geometry) AS geometry FROM a GROUP BY geometry" $(DST_DIR)/a.geojson $(DST_DIR)/a.geojsons; \
